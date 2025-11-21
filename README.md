@@ -231,10 +231,3 @@ Edit `.env` file to customize:
 - `BASE_URL`: Base URL for shortened links
 - `SHORT_CODE_LENGTH`: Default length of short codes
 
-## License
-
-MIT License
-
-## Contributing
-
-Pull requests are welcome! For major changes, please open an issue first to discuss what you would like to change.
