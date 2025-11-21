@@ -3,8 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>URL Statistics</title>
+    <title>URL Statistics - URL Shortener</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+        
         * {
             margin: 0;
             padding: 0;
@@ -12,143 +15,244 @@
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #0a0e27;
             min-height: 100vh;
             padding: 20px;
+            color: #e0e0e0;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Animated background */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 30%, rgba(88, 86, 214, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 80% 70%, rgba(138, 43, 226, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 50% 50%, rgba(64, 224, 208, 0.1) 0%, transparent 50%);
+            animation: backgroundShift 20s ease infinite;
+            z-index: 0;
+        }
+
+        @keyframes backgroundShift {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.8; transform: scale(1.1); }
         }
 
         .page-container {
             max-width: 1400px;
             margin: 0 auto;
+            position: relative;
+            z-index: 1;
         }
 
         .navbar {
-            background: white;
-            border-radius: 15px;
+            background: rgba(20, 25, 47, 0.7);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
             padding: 20px 30px;
-            margin-bottom: 30px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            margin-bottom: 40px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
             display: flex;
             justify-content: space-between;
             align-items: center;
+            animation: slideDown 0.6s ease-out;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .navbar h1 {
-            color: #667eea;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
             font-size: 1.8em;
             margin: 0;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 10px;
         }
 
         .nav-links a {
-            color: #667eea;
+            color: #e0e0e0;
             text-decoration: none;
-            margin-left: 20px;
-            font-weight: 600;
+            font-weight: 500;
             padding: 10px 20px;
-            border-radius: 8px;
-            transition: all 0.3s;
+            border-radius: 12px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .nav-links a::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            transition: left 0.3s ease;
+            z-index: -1;
+        }
+
+        .nav-links a:hover::before {
+            left: 0;
         }
 
         .nav-links a:hover {
-            background: #667eea;
             color: white;
+            transform: translateY(-2px);
         }
 
         .container {
-            max-width: 900px;
+            max-width: 1000px;
             margin: 0 auto;
-            background: white;
-            border-radius: 20px;
-            padding: 40px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            background: rgba(20, 25, 47, 0.7);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 30px;
+            padding: 45px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+            animation: fadeInUp 0.8s ease-out;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         h2 {
-            color: #333;
-            margin-bottom: 30px;
+            color: #e0e0e0;
+            margin-bottom: 35px;
             text-align: center;
+            font-size: 2.2em;
+            font-weight: 700;
+        }
+
+        h2 i {
+            background: linear-gradient(135deg, #667eea 0%, #f093fb 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
 
         .stat-card {
-            background: #f8f9fa;
-            padding: 20px;
-            border-radius: 10px;
-            margin-bottom: 20px;
+            background: rgba(102, 126, 234, 0.1);
+            border: 1px solid rgba(102, 126, 234, 0.3);
+            padding: 22px 25px;
+            border-radius: 15px;
+            margin-bottom: 22px;
             border-left: 4px solid #667eea;
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateX(5px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.2);
         }
 
         .stat-label {
-            color: #666;
+            color: #a0a0a0;
             font-size: 14px;
-            margin-bottom: 8px;
+            margin-bottom: 10px;
             font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
         .stat-value {
-            color: #333;
-            font-size: 18px;
+            color: #e0e0e0;
+            font-size: 17px;
             word-break: break-all;
+            line-height: 1.6;
         }
 
         .stat-value.large {
-            font-size: 36px;
-            font-weight: bold;
-            color: #667eea;
+            font-size: 42px;
+            font-weight: 800;
+            background: linear-gradient(135deg, #667eea 0%, #f093fb 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
 
         .grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 20px;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 22px;
             margin-bottom: 30px;
-        }
-
-        .back-link {
-            text-align: center;
-            margin-top: 30px;
-        }
-
-        .back-link a {
-            color: #667eea;
-            text-decoration: none;
-            font-weight: 600;
-            font-size: 16px;
-        }
-
-        .back-link a:hover {
-            text-decoration: underline;
         }
 
         .clicks-table {
             width: 100%;
             margin-top: 20px;
             border-collapse: collapse;
+            border-radius: 12px;
+            overflow: hidden;
         }
 
         .clicks-table th,
         .clicks-table td {
-            padding: 12px;
+            padding: 14px;
             text-align: left;
-            border-bottom: 1px solid #e0e0e0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
         }
 
         .clicks-table th {
-            background: #f8f9fa;
+            background: rgba(102, 126, 234, 0.2);
             font-weight: 600;
-            color: #555;
+            color: #e0e0e0;
+            text-transform: uppercase;
+            font-size: 12px;
+            letter-spacing: 0.5px;
         }
 
         .clicks-table td {
-            color: #666;
+            color: #a0a0a0;
             font-size: 14px;
+        }
+
+        .clicks-table tbody tr {
+            transition: all 0.2s ease;
+        }
+
+        .clicks-table tbody tr:hover {
+            background: rgba(255, 255, 255, 0.03);
         }
 
         .no-clicks {
             text-align: center;
-            color: #999;
-            padding: 40px;
+            color: #666;
+            padding: 50px;
             font-style: italic;
+            font-size: 16px;
         }
 
         @media (max-width: 768px) {
@@ -160,60 +264,72 @@
             .navbar h1 {
                 font-size: 1.5em;
             }
+
+            .container {
+                padding: 30px 25px;
+            }
+
+            h2 {
+                font-size: 1.8em;
+            }
+
+            .grid {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
 <body>
     <div class="page-container">
         <div class="navbar">
-            <h1>🔗 URL Shortener</h1>
+            <h1><i class="fas fa-link"></i> URL Shortener</h1>
             <div class="nav-links">
-                <a href="/">Home</a>
-                <a href="/dashboard">Dashboard</a>
+                <a href="/"><i class="fas fa-home"></i> Home</a>
+                <a href="/dashboard"><i class="fas fa-chart-line"></i> Dashboard</a>
             </div>
         </div>
 
         <div class="container">
-            <h2>📊 URL Statistics</h2>
+            <h2><i class="fas fa-chart-bar"></i> URL Statistics</h2>
 
         <div class="stat-card">
-            <div class="stat-label">Short URL</div>
+            <div class="stat-label"><i class="fas fa-link"></i> Short URL</div>
             <div class="stat-value">{{ stats.short_url }}</div>
         </div>
 
         <div class="stat-card">
-            <div class="stat-label">Original URL</div>
+            <div class="stat-label"><i class="fas fa-globe"></i> Original URL</div>
             <div class="stat-value">{{ stats.original_url }}</div>
         </div>
 
         <div class="grid">
             <div class="stat-card">
-                <div class="stat-label">Total Clicks</div>
+                <div class="stat-label"><i class="fas fa-mouse-pointer"></i> Total Clicks</div>
                 <div class="stat-value large">{{ stats.click_count }}</div>
             </div>
 
             <div class="stat-card">
-                <div class="stat-label">Created At</div>
+                <div class="stat-label"><i class="far fa-calendar"></i> Created At</div>
                 <div class="stat-value">{{ stats.created_at[:10] }}</div>
             </div>
 
             {% if stats.expires_at %}
             <div class="stat-card">
-                <div class="stat-label">Expires At</div>
+                <div class="stat-label"><i class="far fa-clock"></i> Expires At</div>
                 <div class="stat-value">{{ stats.expires_at[:10] }}</div>
             </div>
             {% endif %}
         </div>
 
         <div class="stat-card">
-            <div class="stat-label">Recent Clicks (Last 10)</div>
+            <div class="stat-label"><i class="fas fa-history"></i> Recent Clicks (Last 10)</div>
             {% if stats.recent_clicks %}
             <table class="clicks-table">
                 <thead>
                     <tr>
-                        <th>Time</th>
-                        <th>IP Address</th>
-                        <th>User Agent</th>
+                        <th><i class="far fa-clock"></i> Time</th>
+                        <th><i class="fas fa-map-marker-alt"></i> IP Address</th>
+                        <th><i class="fas fa-desktop"></i> User Agent</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -221,13 +337,13 @@
                     <tr>
                         <td>{{ click.clicked_at[:19] }}</td>
                         <td>{{ click.ip_address }}</td>
-                        <td>{{ click.user_agent[:50] }}...</td>
+                        <td>{{ click.user_agent[:60] }}...</td>
                     </tr>
                     {% endfor %}
                 </tbody>
             </table>
             {% else %}
-            <div class="no-clicks">No clicks yet</div>
+            <div class="no-clicks"><i class="fas fa-info-circle"></i> No clicks yet</div>
             {% endif %}
         </div>
 
