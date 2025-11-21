@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - URL Shortener</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .navbar {
+            background: white;
+            border-radius: 15px;
+            padding: 20px 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .navbar h1 {
+            color: #667eea;
+            font-size: 1.8em;
+        }
+
+        .nav-links a {
+            color: #667eea;
+            text-decoration: none;
+            margin-left: 20px;
+            font-weight: 600;
+            padding: 10px 20px;
+            border-radius: 8px;
+            transition: all 0.3s;
+        }
+
+        .nav-links a:hover {
+            background: #667eea;
+            color: white;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .dashboard-header {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .dashboard-header h2 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .stats-summary {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .stat-card .number {
+            font-size: 2.5em;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .stat-card .label {
+            font-size: 0.9em;
+            opacity: 0.9;
+        }
+
+        .urls-grid {
+            display: grid;
+            gap: 20px;
+        }
+
+        .url-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .url-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+        }
+
+        .url-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 15px;
+        }
+
+        .url-code {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #667eea;
+            font-family: monospace;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.8em;
+            font-weight: 600;
+        }
+
+        .badge.custom {
+            background: #ffd700;
+            color: #333;
+        }
+
+        .badge.auto {
+            background: #e3f2fd;
+            color: #1976d2;
+        }
+
+        .url-original {
+            color: #666;
+            font-size: 0.95em;
+            margin-bottom: 15px;
+            word-break: break-all;
+            line-height: 1.5;
+        }
+
+        .url-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-bottom: 15px;
+            font-size: 0.9em;
+            color: #888;
+        }
+
+        .url-meta span {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .url-actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.2s;
+            font-size: 0.9em;
+        }
+
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #5568d3;
+        }
+
+        .btn-secondary {
+            background: #f0f0f0;
+            color: #333;
+        }
+
+        .btn-secondary:hover {
+            background: #e0e0e0;
+        }
+
+        .btn-danger {
+            background: #e74c3c;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #c0392b;
+        }
+
+        .pagination {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 30px;
+            padding: 20px;
+        }
+
+        .pagination a,
+        .pagination span {
+            padding: 10px 15px;
+            background: white;
+            border-radius: 8px;
+            text-decoration: none;
+            color: #667eea;
+            font-weight: 600;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .pagination span.current {
+            background: #667eea;
+            color: white;
+        }
+
+        .pagination a:hover {
+            background: #667eea;
+            color: white;
+        }
+
+        .empty-state {
+            background: white;
+            border-radius: 15px;
+            padding: 60px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .empty-state-icon {
+            font-size: 80px;
+            margin-bottom: 20px;
+        }
+
+        .empty-state h3 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .empty-state p {
+            color: #666;
+            margin-bottom: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .navbar {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .url-header {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .url-actions {
+                width: 100%;
+            }
+
+            .btn {
+                flex: 1;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="navbar">
+            <h1>🔗 URL Shortener</h1>
+            <div class="nav-links">
+                <a href="/">Home</a>
+                <a href="/dashboard">Dashboard</a>
+            </div>
+        </div>
+
+        <div class="dashboard-header">
+            <h2>📊 Dashboard</h2>
+            <div class="stats-summary">
+                <div class="stat-card">
+                    <div class="number">{{ data.total }}</div>
+                    <div class="label">Total URLs</div>
+                </div>
+                <div class="stat-card">
+                    <div class="number">{{ data.current_page }}</div>
+                    <div class="label">Current Page</div>
+                </div>
+                <div class="stat-card">
+                    <div class="number">{{ data.pages }}</div>
+                    <div class="label">Total Pages</div>
+                </div>
+            </div>
+        </div>
+
+        {% if data.urls %}
+        <div class="urls-grid">
+            {% for url in data.urls %}
+            <div class="url-card">
+                <div class="url-header">
+                    <div>
+                        <span class="url-code">{{ url.short_code }}</span>
+                        {% if url.custom %}
+                        <span class="badge custom">Custom</span>
+                        {% else %}
+                        <span class="badge auto">Auto</span>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="url-original">
+                    <strong>Original:</strong> {{ url.original_url }}
+                </div>
+
+                <div class="url-meta">
+                    <span>
+                        📅 Created: {{ url.created_at[:10] }}
+                    </span>
+                    <span>
+                        👆 Clicks: <strong>{{ url.click_count }}</strong>
+                    </span>
+                    {% if url.expires_at %}
+                    <span>
+                        ⏰ Expires: {{ url.expires_at[:10] }}
+                    </span>
+                    {% endif %}
+                </div>
+
+                <div class="url-actions">
+                    <button class="btn btn-secondary" onclick="copyToClipboard('{{ url.short_url }}', this)">
+                        📋 Copy
+                    </button>
+                    <a href="/stats/{{ url.short_code }}" class="btn btn-primary">
+                        📊 View Stats
+                    </a>
+                    <a href="/{{ url.short_code }}" target="_blank" class="btn btn-primary">
+                        🔗 Visit
+                    </a>
+                    <button class="btn btn-danger" onclick="deleteUrl('{{ url.short_code }}')">
+                        🗑️ Delete
+                    </button>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        {% if data.pages > 1 %}
+        <div class="pagination">
+            {% if data.has_prev %}
+            <a href="/dashboard?page={{ data.current_page - 1 }}">← Previous</a>
+            {% endif %}
+
+            {% for page_num in range(1, data.pages + 1) %}
+                {% if page_num == data.current_page %}
+                <span class="current">{{ page_num }}</span>
+                {% elif page_num <= 3 or page_num > data.pages - 3 or (page_num >= data.current_page - 1 and page_num <= data.current_page + 1) %}
+                <a href="/dashboard?page={{ page_num }}">{{ page_num }}</a>
+                {% elif page_num == 4 or page_num == data.pages - 3 %}
+                <span>...</span>
+                {% endif %}
+            {% endfor %}
+
+            {% if data.has_next %}
+            <a href="/dashboard?page={{ data.current_page + 1 }}">Next →</a>
+            {% endif %}
+        </div>
+        {% endif %}
+
+        {% else %}
+        <div class="empty-state">
+            <div class="empty-state-icon">📭</div>
+            <h3>No URLs Yet</h3>
+            <p>You haven't created any short URLs yet. Get started by shortening your first URL!</p>
+            <a href="/" class="btn btn-primary">Create Short URL</a>
+        </div>
+        {% endif %}
+    </div>
+
+    <script>
+        function copyToClipboard(text, button) {
+            navigator.clipboard.writeText(text).then(() => {
+                const originalText = button.textContent;
+                button.textContent = '✓ Copied!';
+                button.style.background = '#27ae60';
+                button.style.color = 'white';
+                
+                setTimeout(() => {
+                    button.textContent = originalText;
+                    button.style.background = '';
+                    button.style.color = '';
+                }, 2000);
+            }).catch(err => {
+                alert('Failed to copy: ' + err);
+            });
+        }
+
+        function deleteUrl(shortCode) {
+            if (!confirm('Are you sure you want to delete this URL? This action cannot be undone.')) {
+                return;
+            }
+
+            fetch(`/api/urls/${shortCode}`, {
+                method: 'DELETE'
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('URL deleted successfully!');
+                    window.location.reload();
+                } else {
+                    alert('Error: ' + data.error);
+                }
+            })
+            .catch(error => {
+                alert('Error deleting URL: ' + error);
+            });
+        }
+    </script>
+</body>
+</html>
